@@ -1,8 +1,6 @@
 import {
     LOOKATION_TOKEN,
-    CREDENTIALS,
-    STATION_RANGE,
-    PATH
+    CREDENTIALS
 } from '../home/constants/HomeConstants'
 import fetch from 'isomorphic-fetch'
 import moment from 'moment'
@@ -56,18 +54,6 @@ const getAuthorization = () => {
     }
 }
 
-const getBrutPath = () => {
-    return localStorage.getItem(PATH)
-}
-
-const getPath = () => {
-    const path = getBrutPath()
-    if (path) {
-        return `https://${path}/api/`
-    }
-    throw new Error('Not Found')
-}
-
 const getPayload = () => {
     const token = localStorage.getItem(LOOKATION_TOKEN)
     if (token && token !== 'undefined') {
@@ -84,14 +70,6 @@ const getLoginPassword = (defaultRes = ['', '']) => {
     return localStorage.getItem(CREDENTIALS) ? atob(localStorage.getItem(CREDENTIALS)).split(':') : defaultRes
 }
 
-const getServer = () => {
-    return localStorage.getItem(PATH)
-}
-
-const getStationRange = () => {
-    return localStorage.getItem(STATION_RANGE) || '2000'
-}
-
 const resetCredentials = () => {
     localStorage.removeItem(LOOKATION_TOKEN)
     localStorage.removeItem(CREDENTIALS)
@@ -106,4 +84,4 @@ const isAuthenticated = () => {
     return false
 }
 
-export { checkAuth, checkStatus, getAuthorization, getPayload, getPath, getBrutPath, removeToken, catchError, lookationFetch, getLoginPassword, resetCredentials, getServer, getStationRange, isAuthenticated }
+export { checkAuth, checkStatus, getAuthorization, getPayload, removeToken, catchError, lookationFetch, getLoginPassword, resetCredentials, isAuthenticated }
