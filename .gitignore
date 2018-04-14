@@ -1,0 +1,12 @@
+node_modules
+www/css/*
+build/
+plugins/
+platforms/
+yarn.lock
+package-lock.json
+.env
+.DS_Store
+bundle.js
+bundle.js.map
+main.css

@@ -1,0 +1,46 @@
+body div {
+    .login-page {
+        height: $full-height;
+        min-height: 450px;
+
+        div.input-field {
+            label {
+                left: 1.5rem;
+                top: -3px;
+                color: white;
+                font-weight: 100;
+
+                &.active {
+                    -webkit-transform: translateY(-19px) scale(0.8);
+                    transform: translateY(-19px) scale(0.8);
+                    -webkit-transform-origin: 0 0;
+                    transform-origin: 0 0;
+                    color: #817b7b;
+                    font-weight: normal;
+                }
+            }
+
+            input {
+                border-bottom: 0;
+                background: linear-gradient(141deg, rgba(20, 93, 101, 0.50) 0%, rgba(6, 145, 114, 0.5) 20%, rgba(2, 186, 106, 0.50) 80%);
+                border-radius: 50px;
+                margin: 0;
+                color: white;
+                padding: 0 15px;
+                box-sizing: border-box;
+                font-weight: 100;
+
+                &:focus {
+                    border-bottom: 0 !important;
+                    box-shadow: none !important;
+                    -webkit-box-shadow: none !important;
+                }
+            }
+        }
+
+        button {
+            box-shadow: $shadow;
+            background-color: $accent-color;
+        }
+    }
+}

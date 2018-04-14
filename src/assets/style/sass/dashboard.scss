@@ -1,0 +1,37 @@
+body div {
+    #dashboard {
+        .position-not-found {
+            height: $full-height;
+            h5 {
+                color: $main-color;
+                font-weight: 100;
+            }
+
+            .btn-wrapper{
+                background: $gradient;
+                padding: 3px;
+                width: fit-content;
+                border-radius: 40px;
+                margin: 0 auto;
+                transition: all 0.2s ease-in-out;
+
+                button {
+                    color: $accent-color;
+                    border: 1px solid transparent;
+                    border-image-slice: 1;
+                    background-color: white;
+                    border-radius: 24px;
+                }
+
+                &:hover, &:focus, &:active {
+                    background: linear-gradient(141deg, $second-color 0%, $middle-color 20%, $high-middel-color 80%);
+                    transform: scale(1.1);
+                }
+            }
+        }
+    }
+
+    #map {
+        height: $full-height;
+    }
+}

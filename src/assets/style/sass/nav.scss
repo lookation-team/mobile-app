@@ -1,0 +1,20 @@
+body div {
+    #main-nav nav {
+        background: $gradient;
+
+        div.arrow-nav {
+            position: relative;
+            left: 0.5rem;
+        }
+    }
+
+    .sidenav {
+        .user-view {
+            div > a > i { text-shadow: 1px 1px 2px $high-middel-color }
+            a > span {
+                font-size: 1.2em;
+                text-shadow: $shadow;
+            }
+        }
+    }
+}

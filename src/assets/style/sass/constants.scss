@@ -1,0 +1,10 @@
+$accent-color: #817b7b; //PINK
+$main-color: #0f3055; //BLUE
+$high-middel-color: #145d65; //BLUE
+$middle-color: #069172; //GREEN-BLUE
+$second-color: #02ba6a; //GREEN
+$white-color: white; //WHITE
+
+$shadow: 1px 1px 2px $main-color;
+$gradient: linear-gradient(141deg, $high-middel-color 0%, $middle-color 20%, $second-color 80%);
+$full-height: calc(100% - 54px);
