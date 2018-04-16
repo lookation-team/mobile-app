@@ -1,23 +1,16 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import AppStore from '../../store/AppStore'
 import HomeAction from '../actions/HomeAction'
 import { push, goBack } from 'react-router-redux'
 import { connect } from 'react-redux'
 import { isAuthenticated } from '../../utils/ActionUtils'
 import { initSidenav } from '../../utils/MaterializeUtil'
+import { UserDto } from '../dto/UserDto'
 
 class NavApp extends Component {
     redirect(href) {
         AppStore.dispatch(push(href))
-    }
-
-    componentWillMount() {
-        AppStore.dispatch(HomeAction.watchPosition())
-        //HomeAction.startSockets()
-    }
-
-    componentWillUnmount() {
-        AppStore.dispatch(HomeAction.clearPosition())
     }
 
     logout() {
@@ -56,6 +49,7 @@ class NavApp extends Component {
     }
 
     getSideComponent() {
+        console.log(this.props)
         return (
             <div>
                 <ul id='slide-out' className='sidenav'>
@@ -67,8 +61,8 @@ class NavApp extends Component {
                             <div className='col s12 center-align'>
                                 <a><i className='material-icons large accent-color'>perm_identity</i></a>
                             </div>
-                            <a><span className='white-text name'>John Doe</span></a>
-                            <a><span className='white-text email'>jdandturk@gmail.com</span></a>
+                            <a><span className='white-text name'>{ this.props.user.userName }</span></a>
+                            <a><span className='white-text email'>{ this.props.user.email }</span></a>
                         </div>
                     </li>
                     <li className='divider'/>
@@ -119,19 +113,21 @@ class NavApp extends Component {
 }
 
 NavApp.propTypes = {
-    action: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.element
+    action: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.element
     ]),
-    location: React.PropTypes.shape({
-        pathname: React.PropTypes.string
+    location: PropTypes.shape({
+        pathname: PropTypes.string
     }),
-    children: React.PropTypes.element
+    children: PropTypes.element,
+    user: PropTypes.instanceOf(UserDto)
 }
 
 const mapStateToProps = store => {
     return {
-        action: store.HomeReducer.action
+        action: store.HomeReducer.action,
+        user: store.HomeReducer.user
     }
 }
 

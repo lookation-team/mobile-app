@@ -15,7 +15,7 @@ class Dashboard extends Component {
     }
 
     getContent() {
-        if (this.props.coords.latitude !== 0 && this.props.coords.latitude !== 0) {
+        if (this.props.coords.latitude && this.props.coords.latitude) {
             return (<Map coords={ this.props.coords }/>)
         }
         return (

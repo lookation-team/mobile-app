@@ -1,4 +1,4 @@
-//import Nes from 'nes'
+import socket from 'socket.io-client'
 import {
     LOGIN_FAIL,
     LOOKATION_TOKEN,
@@ -6,17 +6,17 @@ import {
     RECEIVE_CURRENT_LOCATION,
     RECEIVE_WATCHID,
     ACTION,
-    STATION_RANGE,
-    POPUP
+    POPUP,
+    RECEIVE_USER
 } from '../constants/HomeConstants'
-//import { wsPath } from '../../conf/basepath'
+import { wsPath } from '../../conf/basepath'
 import AppStore from '../../store/AppStore'
 import ApplicationConf from '../../conf/ApplicationConf'
 import { push } from 'react-router-redux'
 import { toastError, toast, toastSuccess } from '../../utils/MaterializeUtil'
-import { lookationFetch, removeToken, resetCredentials } from '../../utils/ActionUtils'
+import { lookationFetch, removeToken, resetCredentials, getPayload, getAuthorization } from '../../utils/ActionUtils'
 
-//const client = new Nes.Client('ws://127.0.0.1:3333')
+const client = socket(wsPath)
 
 const HomeAction = {
     loginFail(message) {
@@ -53,6 +53,11 @@ const HomeAction = {
             }
             const id = navigator.geolocation.watchPosition(position => {
                 dispatch(HomeAction.receiveCurrentLocation(position))
+                HomeAction.socketPublish('position', {
+                    timestamp: position.timestamp,
+                    longitude: position.coords.longitude,
+                    latitude: position.coords.latitude
+                })
             },
             err => {
                 if (highAccur) {
@@ -72,10 +77,23 @@ const HomeAction = {
         return dispatch => {
             navigator.geolocation.clearWatch(id)
             dispatch(HomeAction.watchId(null))
+            dispatch(HomeAction.receiveCurrentLocation({
+                timestamp: null,
+                coords: { longitude: null, latitude: null }
+            }))
         }
     },
-    setStationRange(range) {
-        localStorage.setItem(STATION_RANGE, range)
+    receiveUser(user) {
+        return { type: RECEIVE_USER, user: user }
+    },
+    fetchUser() {
+        return dispatch => {
+            const obj = JSON.parse(getPayload())
+            return lookationFetch(ApplicationConf.getLooker(obj.id), {
+                headers: getAuthorization()
+            }, true)
+                .then(json => dispatch(HomeAction.receiveUser(json)))
+        }
     },
     login(login, password) {
         return dispatch => {
@@ -88,7 +106,9 @@ const HomeAction = {
             }, true).then(json => {
                 localStorage.setItem(LOOKATION_TOKEN, json.token)
                 HomeAction.startSockets(json.token)
+                dispatch(HomeAction.fetchUser())
                 dispatch(push('/'))
+                dispatch(HomeAction.watchPosition())
                 toast('Hey, nice to see you again !')
             }).catch(() => {
                 resetCredentials()
@@ -103,19 +123,21 @@ const HomeAction = {
             }).then(() => {*/
             removeToken()
             dispatch(push('/login'))
+            dispatch(HomeAction.resetStore())
+            client.close()
             toast('Bye')
             /*})*/
         }
     },
-    /*startSockets(token) {
-        client.connect({
+    startSockets(token) {
+        HomeAction.socketPublish('auth', token)
+        /*client.connect({
             auth: {
                 headers: { authorization: `Bearer ${token}` }
             }
         }, err => {
             console.log(err)
-        })
-        console.log(client)
+        })*/
     },
     socketSubscribe(channel, handler) {
         client.subscribe(channel, handler)
@@ -123,19 +145,24 @@ const HomeAction = {
     socketUnsubscribe(channel, handler = null) {
         client.unsubscribe(channel, handler)
     },
-    socketPublish() {
-        const payload = client.request('/position')
-        return payload
+    socketPublish(path, data) {
+        client.emit(path, data)
     },
     socketRequest(path) {
         const payload = client.request(path)
         return payload
-    },*/
+    },
     setAction(action) {
         return { type: ACTION, action: action }
     },
     setPopup(popup) {
         return { type: POPUP, popup: popup }
+    },
+    resetStore() {
+        return dispatch => {
+            dispatch(HomeAction.clearPosition())
+            dispatch(HomeAction.receiveUser())
+        }
     }
 }
 

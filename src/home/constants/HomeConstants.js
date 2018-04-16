@@ -1,4 +1,5 @@
 module.exports = {
+    RECEIVE_USER: 'RECEIVE_USER',
     LOGIN_FAIL: 'LOGIN_FAIL',
     ADD_TOKEN: 'ADD_TOKEN',
     REMOVE_TOKEN: 'REMOVE_TOKEN',

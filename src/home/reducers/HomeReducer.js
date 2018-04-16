@@ -4,8 +4,10 @@ import {
     RECEIVE_CURRENT_LOCATION,
     ACTION,
     RECEIVE_WATCHID,
-    POPUP
+    POPUP,
+    RECEIVE_USER
 } from '../constants/HomeConstants'
+import UserDto from '../dto/UserDto'
 
 export function HomeReducer(state = {}, action) {
     switch (action.type) {
@@ -17,7 +19,8 @@ export function HomeReducer(state = {}, action) {
             return Object.assign({}, state, {
                 coords: {
                     latitude: action.position.coords.latitude,
-                    longitude: action.position.coords.longitude
+                    longitude: action.position.coords.longitude,
+                    timestamp: action.position.timestamp
                 }
             })
         case DISCONNECTED:
@@ -36,6 +39,10 @@ export function HomeReducer(state = {}, action) {
             return Object.assign({}, state, {
                 popup: action.popup
             })
+        case RECEIVE_USER:
+            return Object.assign({}, state, {
+                user: new UserDto(action.user)
+            })
         default:
             return state
     }
@@ -47,7 +54,8 @@ export const store = {
     navhistory: [],
     coords: {
         latitude: 0,
-        longitude: 0
+        longitude: 0,
+        timestamp: 0
     },
     watchId: null,
     action: '',
@@ -59,5 +67,6 @@ export const store = {
         id: '',
         fixedFooter: false,
         bottomSheet: false
-    }
+    },
+    user: new UserDto()
 }
