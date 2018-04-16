@@ -1,5 +1,5 @@
 node_modules
-www/css/*
+www/css/main.css
 build/
 plugins/
 platforms/

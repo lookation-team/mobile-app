@@ -1,3 +1,4 @@
+//import Nes from 'nes'
 import {
     LOGIN_FAIL,
     LOOKATION_TOKEN,
@@ -8,11 +9,14 @@ import {
     STATION_RANGE,
     POPUP
 } from '../constants/HomeConstants'
+//import { wsPath } from '../../conf/basepath'
 import AppStore from '../../store/AppStore'
 import ApplicationConf from '../../conf/ApplicationConf'
 import { push } from 'react-router-redux'
 import { toastError, toast, toastSuccess } from '../../utils/MaterializeUtil'
 import { lookationFetch, removeToken, resetCredentials } from '../../utils/ActionUtils'
+
+//const client = new Nes.Client('ws://127.0.0.1:3333')
 
 const HomeAction = {
     loginFail(message) {
@@ -83,6 +87,7 @@ const HomeAction = {
                 })
             }, true).then(json => {
                 localStorage.setItem(LOOKATION_TOKEN, json.token)
+                HomeAction.startSockets(json.token)
                 dispatch(push('/'))
                 toast('Hey, nice to see you again !')
             }).catch(() => {
@@ -102,6 +107,30 @@ const HomeAction = {
             /*})*/
         }
     },
+    /*startSockets(token) {
+        client.connect({
+            auth: {
+                headers: { authorization: `Bearer ${token}` }
+            }
+        }, err => {
+            console.log(err)
+        })
+        console.log(client)
+    },
+    socketSubscribe(channel, handler) {
+        client.subscribe(channel, handler)
+    },
+    socketUnsubscribe(channel, handler = null) {
+        client.unsubscribe(channel, handler)
+    },
+    socketPublish() {
+        const payload = client.request('/position')
+        return payload
+    },
+    socketRequest(path) {
+        const payload = client.request(path)
+        return payload
+    },*/
     setAction(action) {
         return { type: ACTION, action: action }
     },

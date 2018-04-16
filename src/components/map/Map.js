@@ -23,7 +23,6 @@ class Map extends Component {
             })
         })
         this.map = map
-        console.log(map)
     }
 
     componentDidUpdate() {

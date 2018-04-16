@@ -13,6 +13,7 @@ class NavApp extends Component {
 
     componentWillMount() {
         AppStore.dispatch(HomeAction.watchPosition())
+        //HomeAction.startSockets()
     }
 
     componentWillUnmount() {
@@ -94,7 +95,6 @@ class NavApp extends Component {
     }
 
     render() {
-        console.log(process.env)
         return (
             <div>
                 <div className='navbar-fixed' id='main-nav'>
