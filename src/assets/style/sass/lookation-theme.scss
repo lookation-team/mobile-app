@@ -18,6 +18,10 @@ body div {
     .no-padding { padding: 0 !important; }
     .no-padding-v { padding-top: 0 !important; padding-bottom: 0 !important; }
     .no-padding-h { padding-left: 0 !important; padding-right: 0 !important; }
+    .spinner-blue { border-color: #0f3055; }
+    .spinner-light-blue { border-color: #145d65; }
+    .spinner-light-green { border-color: #069172; }
+    .spinner-green { border-color: #02ba6a; }
 }
 
 div#toast-container > div.toast {

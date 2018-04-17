@@ -5,6 +5,8 @@ import {
 import fetch from 'isomorphic-fetch'
 import moment from 'moment'
 import { toastError } from './MaterializeUtil'
+import HomeAction from '../home/actions/HomeAction'
+import AppStore from '../store/AppStore'
 
 const removeToken = () => {
     localStorage.removeItem(LOOKATION_TOKEN)
@@ -16,8 +18,11 @@ const checkAuth = response => {
             return response.json()
         case 401:
             throw new Error('Sorry you\'re not authorised' )
+        case 403:
+            AppStore.dispatch(HomeAction.logout())
+            throw new Error('Session expired' )
         case 404:
-            throw new Error('Sorry we canno\'t find the requested resource')
+            throw new Error('Resource not found')
         case 500:
             throw new Error('Oops.. somthing went wrong on our side.. sorry')
         default:
@@ -58,7 +63,7 @@ const getPayload = () => {
     const token = localStorage.getItem(LOOKATION_TOKEN)
     if (token && token !== 'undefined') {
         try {
-            return atob(token.split('.')[1])
+            return JSON.parse(atob(token.split('.')[1]))
         } catch (err) {
             return ''
         }
@@ -75,13 +80,17 @@ const resetCredentials = () => {
     localStorage.removeItem(CREDENTIALS)
 }
 
+const getToken = () => {
+    return localStorage.getItem(LOOKATION_TOKEN)
+}
+
 const isAuthenticated = () => {
     const payload = getPayload()
     if (payload) {
-        const exp = moment(JSON.parse(payload).exp)
+        const exp = moment(payload.exp)
         return moment().isAfter(exp)
     }
     return false
 }
 
-export { checkAuth, checkStatus, getAuthorization, getPayload, removeToken, catchError, lookationFetch, getLoginPassword, resetCredentials, isAuthenticated }
+export { checkAuth, checkStatus, getAuthorization, getPayload, removeToken, catchError, lookationFetch, getLoginPassword, resetCredentials, isAuthenticated, getToken }

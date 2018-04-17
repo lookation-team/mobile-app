@@ -1,11 +1,16 @@
 import React, { Component } from 'react'
 import ol from 'openlayers'
 import PropTypes from 'prop-types'
+import { client } from '../../home/actions/HomeAction'
 import mapIcon from '../../../www/images/map-icon.png'
+import { getPayload } from '../../utils/ActionUtils'
 
 class Map extends Component {
     constructor(props) {
         super(props)
+        this.state = {
+            id: getPayload().id
+        }
     }
 
     componentDidMount() {
@@ -22,11 +27,49 @@ class Map extends Component {
                 zoom: 4
             })
         })
+        this.points = {}
         this.map = map
+        this.receiveSockets()
+    }
+
+    receiveSockets() {
+        client().on('lookerMouv', pos => {
+            if (pos.id !== this.state.id) {
+                if (!this.points[pos.id]) {
+                    this.map.addLayer(this.getSimpleLayer(pos.id, pos.longitude, pos.latitude))
+                } else {
+                    this.points[pos.id].getGeometry().setCoordinates(this.getPosition(pos.longitude, pos.latitude))
+                }
+            }
+        })
     }
 
     componentDidUpdate() {
         this.mouvPosition()
+    }
+
+    getSimpleLayer(id, longitude, latitude) {
+        const position = new ol.source.Vector()
+        const vector = new ol.layer.Vector({
+            source: position
+        })
+        const point = new ol.Feature({
+            geometry: new ol.geom.Point(this.getPosition(longitude, latitude)),
+            name: id
+        })
+        this.points[id] = point
+        point.setStyle(
+            new ol.style.Style({
+                image: new ol.style.Icon({
+                    scale: 0.3,
+                    anchor: [0.5, 1],
+                    src: mapIcon
+                }),
+                zIndex: 1
+            })
+        )
+        position.addFeature(point)
+        return vector
     }
 
     getLookerLayer() {

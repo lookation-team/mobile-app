@@ -14,9 +14,24 @@ import AppStore from '../../store/AppStore'
 import ApplicationConf from '../../conf/ApplicationConf'
 import { push } from 'react-router-redux'
 import { toastError, toast, toastSuccess } from '../../utils/MaterializeUtil'
-import { lookationFetch, removeToken, resetCredentials, getPayload, getAuthorization } from '../../utils/ActionUtils'
+import { lookationFetch, removeToken, resetCredentials, getPayload, getAuthorization, getToken } from '../../utils/ActionUtils'
 
-const client = socket(wsPath)
+let io = null
+export const client = () => {
+    if (!io || !io.connected) {
+        io = socket(wsPath, {
+            query: {
+                token: getToken()
+            }
+        })
+        io.on('reconnect_attempt', () => {
+            io.io.opts.query = {
+                query: getToken()
+            }
+        })
+    }
+    return io
+}
 
 const HomeAction = {
     loginFail(message) {
@@ -64,7 +79,8 @@ const HomeAction = {
                     dispatch(HomeAction.watchPosition(false))
                 } else {
                     console.log('Err', err)
-                    toastError('Please enable the geolocation to use our app\'')
+                    dispatch(HomeAction.watchId(null))
+                    toastError('We can\'t find your location')
                 }
             }, {
                 enableHighAccuracy: highAccur,
@@ -88,7 +104,7 @@ const HomeAction = {
     },
     fetchUser() {
         return dispatch => {
-            const obj = JSON.parse(getPayload())
+            const obj = getPayload()
             return lookationFetch(ApplicationConf.getLooker(obj.id), {
                 headers: getAuthorization()
             }, true)
@@ -105,7 +121,7 @@ const HomeAction = {
                 })
             }, true).then(json => {
                 localStorage.setItem(LOOKATION_TOKEN, json.token)
-                HomeAction.startSockets(json.token)
+                client()
                 dispatch(HomeAction.fetchUser())
                 dispatch(push('/'))
                 dispatch(HomeAction.watchPosition())
@@ -124,33 +140,16 @@ const HomeAction = {
             removeToken()
             dispatch(push('/login'))
             dispatch(HomeAction.resetStore())
-            client.close()
+            HomeAction.closeSocket()
             toast('Bye')
             /*})*/
         }
     },
-    startSockets(token) {
-        HomeAction.socketPublish('auth', token)
-        /*client.connect({
-            auth: {
-                headers: { authorization: `Bearer ${token}` }
-            }
-        }, err => {
-            console.log(err)
-        })*/
-    },
-    socketSubscribe(channel, handler) {
-        client.subscribe(channel, handler)
-    },
-    socketUnsubscribe(channel, handler = null) {
-        client.unsubscribe(channel, handler)
+    closeSocket() {
+        client().close()
     },
     socketPublish(path, data) {
-        client.emit(path, data)
-    },
-    socketRequest(path) {
-        const payload = client.request(path)
-        return payload
+        return client().emit(path, data)
     },
     setAction(action) {
         return { type: ACTION, action: action }

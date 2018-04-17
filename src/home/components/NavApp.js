@@ -4,7 +4,7 @@ import AppStore from '../../store/AppStore'
 import HomeAction from '../actions/HomeAction'
 import { push, goBack } from 'react-router-redux'
 import { connect } from 'react-redux'
-import { isAuthenticated } from '../../utils/ActionUtils'
+import { isAuthenticated, getPayload } from '../../utils/ActionUtils'
 import { initSidenav } from '../../utils/MaterializeUtil'
 import { UserDto } from '../dto/UserDto'
 
@@ -23,6 +23,11 @@ class NavApp extends Component {
 
     componentDidMount() {
         initSidenav('.sidenav')
+        if (isAuthenticated()) {
+            const token = getPayload()
+            console.log(token.id)
+            AppStore.dispatch(HomeAction.fetchUser(token.id))
+        }
     }
 
     componentDidUpdate() {
@@ -49,12 +54,11 @@ class NavApp extends Component {
     }
 
     getSideComponent() {
-        console.log(this.props)
         return (
             <div>
                 <ul id='slide-out' className='sidenav'>
                     <li>
-                        <div className='user-view'>
+                        <div className='user-view no-margin'>
                             <div className='background'>
                                 <img src='images/lookation-logo.png'/>
                             </div>
@@ -65,7 +69,7 @@ class NavApp extends Component {
                             <a><span className='white-text email'>{ this.props.user.email }</span></a>
                         </div>
                     </li>
-                    <li className='divider'/>
+                    <li className='divider no-margin'/>
                     <li>
                         <a className='waves-effect sidenav-close' onClick={ () => this.redirect('/') }>
                             <i className='material-icons'>dashboard</i> Home
@@ -74,13 +78,13 @@ class NavApp extends Component {
                     <li className='divider'/>
                     <li>
                         <a className='waves-effect sidenav-close' onClick={ () => this.redirect('/options') }>
-                            <i className='material-icons'>settings</i> Options
+                            <i className='material-icons'>settings</i> Account
                         </a>
                     </li>
                     <li className='divider'/>
                     <li>
                         <a className='waves-effect sidenav-close' onClick={ this.logout }>
-                            <i className='material-icons'>power_settings_new</i> Déconnexion
+                            <i className='material-icons'>power_settings_new</i> Logout
                         </a>
                     </li>
                 </ul>

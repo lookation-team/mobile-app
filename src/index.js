@@ -34,7 +34,7 @@ const checkAuth = replace => {
             replace('/login')
         }
     } else {
-        const exp = moment(JSON.parse(payload).exp)
+        const exp = moment(payload.exp)
         if (moment().isAfter(exp)) {
             if (logPass) {
                 reLogin(logPass)

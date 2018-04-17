@@ -2,14 +2,13 @@ import React, { Component } from 'react'
 import { push } from 'react-router-redux'
 import AppStore from '../../store/AppStore'
 import HomeAction from '../actions/HomeAction'
-import { getBrutPath, getStationRange } from '../../utils/ActionUtils'
 
 class Options extends Component{
     constructor(props) {
         super(props)
         this.state = {
-            path: getBrutPath() || '',
-            range: getStationRange()
+            path: '',
+            range: 5
         }
         this.handleChange = this.handleChange.bind(this)
         this.onSubmit = this.onSubmit.bind(this)
@@ -18,11 +17,7 @@ class Options extends Component{
 
     onSubmit() {
         HomeAction.setStationRange(parseInt(this.state.range))
-        if (this.state.path !== getBrutPath()) {
-            AppStore.dispatch(HomeAction.testPath(this.state.path))
-        } else {
-            AppStore.dispatch(push('/'))
-        }
+        AppStore.dispatch(push('/'))
     }
 
     handleChange(e) {
