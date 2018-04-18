@@ -25,7 +25,7 @@ class Dashboard extends Component {
     }
 
     getContent() {
-        if (this.props.coords.latitude && this.props.coords.latitude || !!1) {
+        if (this.props.coords.latitude && this.props.coords.latitude) {
             return (<Map coords={ this.props.coords } positions={ this.props.positions }/>)
         }
         const title = this.props.watchId ? 'We are looking for you!' : 'We can\'t find your position...'
