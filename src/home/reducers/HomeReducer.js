@@ -2,12 +2,14 @@ import {
     LOGIN_FAIL,
     DISCONNECTED,
     RECEIVE_CURRENT_LOCATION,
+    RECEIVE_LOOKERS_POSITIONS,
     ACTION,
     RECEIVE_WATCHID,
     POPUP,
     RECEIVE_USER
 } from '../constants/HomeConstants'
 import UserDto from '../dto/UserDto'
+import DtoPosition from '../dto/DtoPosition'
 
 export function HomeReducer(state = {}, action) {
     switch (action.type) {
@@ -22,6 +24,10 @@ export function HomeReducer(state = {}, action) {
                     longitude: action.position.coords.longitude,
                     timestamp: action.position.timestamp
                 }
+            })
+        case RECEIVE_LOOKERS_POSITIONS:
+            return Object.assign({}, state, {
+                positions: action.positions.map(p => new DtoPosition(p))
             })
         case DISCONNECTED:
             return Object.assign({}, state, {
@@ -68,5 +74,6 @@ export const store = {
         fixedFooter: false,
         bottomSheet: false
     },
-    user: new UserDto()
+    user: new UserDto(),
+    positions: []
 }

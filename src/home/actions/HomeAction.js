@@ -1,9 +1,11 @@
+import moment from 'moment'
 import socket from 'socket.io-client'
 import {
     LOGIN_FAIL,
     LOOKATION_TOKEN,
     DISCONNECTED,
     RECEIVE_CURRENT_LOCATION,
+    RECEIVE_LOOKERS_POSITIONS,
     RECEIVE_WATCHID,
     ACTION,
     POPUP,
@@ -67,12 +69,16 @@ const HomeAction = {
                 dispatch(HomeAction.clearPosition(AppStore.getState().HomeReducer.watchId))
             }
             const id = navigator.geolocation.watchPosition(position => {
-                dispatch(HomeAction.receiveCurrentLocation(position))
-                HomeAction.socketPublish('position', {
-                    timestamp: position.timestamp,
-                    longitude: position.coords.longitude,
-                    latitude: position.coords.latitude
-                })
+                const lastTS = AppStore.getState().HomeReducer.coords.timestamp
+                const diff = moment().diff(moment(lastTS), 'seconds')
+                if (lastTS === 0 || diff > 10) {
+                    dispatch(HomeAction.receiveCurrentLocation(position))
+                    HomeAction.socketPublish('position', {
+                        timestamp: position.timestamp,
+                        longitude: position.coords.longitude,
+                        latitude: position.coords.latitude
+                    })
+                }
             },
             err => {
                 if (highAccur) {
@@ -94,8 +100,8 @@ const HomeAction = {
             navigator.geolocation.clearWatch(id)
             dispatch(HomeAction.watchId(null))
             dispatch(HomeAction.receiveCurrentLocation({
-                timestamp: null,
-                coords: { longitude: null, latitude: null }
+                timestamp: 0,
+                coords: { longitude: 0, latitude: 0 }
             }))
         }
     },
@@ -161,6 +167,18 @@ const HomeAction = {
         return dispatch => {
             dispatch(HomeAction.clearPosition())
             dispatch(HomeAction.receiveUser())
+        }
+    },
+    setLookersPositions(positions) {
+        return { type: RECEIVE_LOOKERS_POSITIONS, positions: positions }
+    },
+    fetchLookersPositions() {
+        return dispatch => {
+            lookationFetch(ApplicationConf.getLookersPositions(), {
+                headers: getAuthorization()
+            }).then(json => {
+                dispatch(HomeAction.setLookersPositions(json))
+            })
         }
     }
 }

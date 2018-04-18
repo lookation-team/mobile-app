@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import ol from 'openlayers'
+import moment from 'moment'
 import PropTypes from 'prop-types'
 import { client } from '../../home/actions/HomeAction'
 import mapIcon from '../../../www/images/map-icon.png'
 import { getPayload } from '../../utils/ActionUtils'
+import DtoPosition from '../../home/dto/DtoPosition'
 
 class Map extends Component {
     constructor(props) {
@@ -23,13 +25,14 @@ class Map extends Component {
                 this.getLookerLayer()
             ],
             view: new ol.View({
-                center: ol.proj.fromLonLat([1.41, 43]),
-                zoom: 4
+                center: ol.proj.fromLonLat([this.props.coords.longitude, this.props.coords.latitude]),
+                zoom: 16
             })
         })
         this.points = {}
         this.map = map
         this.receiveSockets()
+        this.createPositions()
     }
 
     receiveSockets() {
@@ -44,8 +47,23 @@ class Map extends Component {
         })
     }
 
-    componentDidUpdate() {
-        this.mouvPosition()
+    createPositions() {
+        this.props.positions.map(p => {
+            const diff = moment().diff(moment(parseInt(p.timestamp)), 'minutes')
+            if (diff < 10 && this.state.id !== p.id) {
+                this.map.addLayer(this.getSimpleLayer(p.id, p.longitude, p.latitude))
+                console.log(this.map, this.map.features)
+            }
+        })
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.coords !== this.props.coords) {
+            this.mouvPosition()
+        }
+        if (prevProps.positions !== this.props.positions) {
+            this.createPositions()
+        }
     }
 
     getSimpleLayer(id, longitude, latitude) {
@@ -61,7 +79,7 @@ class Map extends Component {
         point.setStyle(
             new ol.style.Style({
                 image: new ol.style.Icon({
-                    scale: 0.3,
+                    scale: 0.8,
                     anchor: [0.5, 1],
                     src: mapIcon
                 }),
@@ -80,7 +98,7 @@ class Map extends Component {
         })
         const point = new ol.Feature({
             geometry: new ol.geom.Point(this.getPosition(longitude, latitude)),
-            name: 'Me'
+            name: this.state.id
         })
         this.looker = point
         point.setStyle(
@@ -118,14 +136,17 @@ class Map extends Component {
 Map.propTypes = {
     coords: PropTypes.shape({
         latitude: PropTypes.number,
-        longitude: PropTypes.number
-    })
+        longitude: PropTypes.number,
+        timestamp: PropTypes.number
+    }),
+    positions: PropTypes.arrayOf(PropTypes.instanceOf(DtoPosition))
 }
 
 Map.defaultProps = {
     coords: {
         latitude: 0,
-        longitude: 0
+        longitude: 0,
+        timestamp: 0
     }
 }
 

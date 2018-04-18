@@ -25,7 +25,6 @@ class NavApp extends Component {
         initSidenav('.sidenav')
         if (isAuthenticated()) {
             const token = getPayload()
-            console.log(token.id)
             AppStore.dispatch(HomeAction.fetchUser(token.id))
         }
     }
