@@ -79,7 +79,7 @@ class Map extends Component {
         point.setStyle(
             new ol.style.Style({
                 image: new ol.style.Icon({
-                    scale: 0.8,
+                    scale: 0.3,
                     anchor: [0.5, 1],
                     src: mapIcon
                 }),

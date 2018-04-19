@@ -49,6 +49,15 @@ class NavApp extends Component {
                 </div>
             )
         }
+        if (this.props.location.pathname === '/signup') {
+            return (
+                <div>
+                    <div className='left arrow-nav'>
+                        <i className='material-icons menu-icon' onClick={ () => AppStore.dispatch(goBack()) }>arrow_back</i>
+                    </div>
+                </div>
+            )
+        }
         return null
     }
 

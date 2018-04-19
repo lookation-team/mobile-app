@@ -1,4 +1,26 @@
 body div {
+    div#signup {
+        h5 {
+            background: $gradient;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 300;
+        }
+        .center-align > button {
+            box-shadow: $shadow;
+            background-color: $accent-color;
+        }
+        i.material-icons {
+            margin-right: 10px;
+            background: $gradient;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .datepicker-date-display {
+            background: $gradient;
+        }
+    }
+
     .login-page {
         height: $full-height;
         min-height: 450px;
@@ -41,6 +63,11 @@ body div {
         button {
             box-shadow: $shadow;
             background-color: $accent-color;
+        }
+
+        .sign-up {
+            color: $main-color;
+            span { color: $second-color; }
         }
     }
 }

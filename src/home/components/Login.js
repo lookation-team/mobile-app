@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { push } from 'react-router-redux'
 import AppStore from '../../store/AppStore'
 import HomeAction from '../actions/HomeAction'
 import { getLoginPassword } from '../../utils/ActionUtils'
@@ -44,6 +45,10 @@ class Login extends Component {
         document.body.classList.remove('login-body')
     }
 
+    redirect(href) {
+        AppStore.dispatch(push(href))
+    }
+
     onSubmit(e) {
         e.preventDefault()
         const pwd = this.refs.password.value
@@ -70,7 +75,7 @@ class Login extends Component {
                                         <input id='login' data-mode='login' type='text' ref='login' className='login' value={this.state.login} onChange={this.handleChange} />
                                         <label htmlFor='login' className='valign-wrapper'>
                                             <i className='material-icons'>person</i>
-                                            Login
+                                            Email
                                         </label>
                                     </div>
                                 </div>
@@ -88,6 +93,11 @@ class Login extends Component {
                                         <button type='submit' className='btn waves-effect waves-light'>
                                             Sign-In
                                         </button>
+                                    </div>
+                                </div>
+                                <div className='row no-margin-h'>
+                                    <div className='col s12 center-align sign-up'>
+                                        Not a looker ? <span onClick={() => this.redirect('/signup')}>Sign up</span>
                                     </div>
                                 </div>
                             </form>

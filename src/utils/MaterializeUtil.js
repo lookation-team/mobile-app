@@ -3,6 +3,16 @@ const initSidenav = (selector, params = {}) => {
     window.M.Sidenav.init(elem, params)
 }
 
+const initDatepicker = (selector, params = {}) => {
+    const elem = document.querySelector(selector)
+    window.M.Datepicker.init(elem, params)
+}
+
+const initSelect = (selector, params = {}) => {
+    const elem = document.querySelector(selector)
+    window.M.FormSelect.init(elem, params)
+}
+
 const toast = (text, params) => {
     const defaultParams = {
         classes: 'rounded',
@@ -21,4 +31,4 @@ const toastSuccess = (text, params = { classes: 'rounded success' }) => {
     toast(text, params)
 }
 
-export { initSidenav, toast, toastError, toastSuccess }
+export { initSidenav, toast, toastError, toastSuccess, initDatepicker, initSelect }

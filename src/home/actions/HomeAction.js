@@ -117,6 +117,16 @@ const HomeAction = {
                 .then(json => dispatch(HomeAction.receiveUser(json)))
         }
     },
+    signup(form) {
+        return dispatch => {
+            return lookationFetch(ApplicationConf.looker(), {
+                method: 'POST',
+                body: JSON.stringify(form)
+            }, true).then(() => {
+                dispatch(HomeAction.login(form.email, form.password))
+            })
+        }
+    },
     login(login, password) {
         return dispatch => {
             return lookationFetch(ApplicationConf.login(), {
@@ -178,6 +188,19 @@ const HomeAction = {
                 headers: getAuthorization()
             }).then(json => {
                 dispatch(HomeAction.setLookersPositions(json))
+            })
+        }
+    },
+    putLooker(id, looker) {
+        return dispatch => {
+            lookationFetch(ApplicationConf.getLooker(id), {
+                method: 'PUT',
+                headers: getAuthorization(),
+                body: JSON.stringify(looker)
+            }).then(json => {
+                console.log(json)
+                toastSuccess('Infos successfully updated')
+                dispatch(push('/'))
             })
         }
     }

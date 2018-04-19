@@ -11,6 +11,7 @@ import { getPayload, getLoginPassword } from './utils/ActionUtils'
 import moment from 'moment'
 import HomeAction from './home/actions/HomeAction'
 import Options from './home/components/Options'
+import SignUp from './home/components/SignUp'
 
 const history = syncHistoryWithStore(hashHistory, AppStore)
 
@@ -72,6 +73,7 @@ render(
                     <Route path='station/:id/contact' component={ ContactForm } /> */}
                 </Route>
                 <Route path='login' component={ Login } onEnter={ onEnterLogin }/>
+                <Route path='signup' component={ SignUp } onEnter={ onEnterLogin }/>
                 <Route path='options' component={ Options } />
             </Route>
         </Router>
